@@ -1,8 +1,11 @@
+import os, random
 from src.belly import Belly
 
-def before_scenario(context, scenario):
-    context.belly = Belly()
-
+def before_scenario(context,scenario):
+    seed=os.getenv('RANDOM_SEED')
+    if seed:
+        random.seed(int(seed))
+    context.belly=Belly()
 """
 # features/environment.py
 

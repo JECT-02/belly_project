@@ -55,3 +55,9 @@ Escenario: comer pepinos y esperar en inglés
   Dado que he comido 20 pepinos
   Cuando espero "two hours and thirty minutes"
   Entonces mi estómago debería gruñir
+
+@spanish @random
+Escenario: comer pepinos y esperar un tiempo aleatorio entre 1 y 3 horas
+  Dado que he comido 20 pepinos
+  Cuando espero un tiempo aleatorio entre 1 y 3 horas
+  Entonces mi estómago podría gruñir
