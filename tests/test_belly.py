@@ -14,6 +14,11 @@ def test_parse_time_description():
     assert parse_time_description("50 minutos") == 50 / 60
     assert parse_time_description("20 segundos") == 20 / 3600
 
+def test_parse_time_description_with_english():
+    assert parse_time_description("two hours") == 2.0
+    assert parse_time_description("thirty minutes") == 0.5
+    assert parse_time_description("one hour and fifteen minutes") == 1.25
+
 def test_invalid_time_description():
     with pytest.raises(ValueError):
         parse_time_description("invalid description")

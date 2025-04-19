@@ -3,9 +3,12 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  test:
+  behave-tests:
+    name: Behave Tests (${{ matrix.lang }})
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        lang: [spanish, english]
     steps:
       - name: Checkout del código
         uses: actions/checkout@v3
@@ -16,11 +19,21 @@ jobs:
           python-version: '3.12'
 
       - name: Instalar dependencias
-        run: |
-          pip install behave pytest
+        run: pip install behave pytest
 
-      - name: Ejecutar tests de Behave
-        run: behave
+      - name: Ejecutar escenarios Behave (${{ matrix.lang }})
+        run: behave -t @${{ matrix.lang }}
 
-      - name: Ejecutar tests de pytest
-        run: pytest
+  pytest:
+    name: Pytest
+    runs-on: ubuntu-latest
+    needs: behave-tests
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - run: pip install behave pytest
+      - run: pytest
+
+
