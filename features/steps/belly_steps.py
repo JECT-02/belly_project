@@ -24,17 +24,13 @@ def parse_time_description(time_description):
     time_description = time_description.strip('"').lower().replace('y', ' ').replace(',', ' ').strip()
     if time_description == 'media hora':
         return 0.5
-    # Expresión regular para capturar horas, minutos y segundos
-    pattern = re.compile(r'(?:(\w+)\s*horas?)?\s*(?:(\w+)\s*minutos?)?\s*(?:(\w+)\s*segundos?)?')
+    # Expresión regular para capturar números (enteros o decimales) seguidos de unidades de tiempo
+    pattern = re.compile(r'(?:(\d+(?:\.\d+)?)\s*horas?)?\s*(?:(\d+(?:\.\d+)?)\s*minutos?)?\s*(?:(\d+(?:\.\d+)?)\s*segundos?)?')
     match = pattern.fullmatch(time_description)
     if match:
-        hours_word = match.group(1)
-        minutes_word = match.group(2)
-        seconds_word = match.group(3)
-        # Convertir palabras a números
-        hours = convertir_palabra_a_numero(hours_word or "0")
-        minutes = convertir_palabra_a_numero(minutes_word or "0")
-        seconds = convertir_palabra_a_numero(seconds_word or "0")
+        hours = float(match.group(1) or 0)
+        minutes = float(match.group(2) or 0)
+        seconds = float(match.group(3) or 0)
         # Calcular el tiempo total en horas
         total_time_in_hours = hours + (minutes / 60) + (seconds / 3600)
         return total_time_in_hours
@@ -47,7 +43,12 @@ def step_given_eaten_cukes(context, cukes):
 
 @when('espero {time_description}')
 def step_when_wait_time_description(context, time_description):
-    total_time_in_hours = parse_time_description(time_description)
+    try:
+        # Intentar convertir directamente a float si es un número puro
+        total_time_in_hours = float(time_description)
+    except ValueError:
+        # Si falla, usar parse_time_description para interpretar la entrada
+        total_time_in_hours = parse_time_description(time_description)
     context.belly.esperar(total_time_in_hours)
 
 @then('mi estómago debería gruñir')
