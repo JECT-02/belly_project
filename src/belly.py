@@ -10,8 +10,12 @@ class Belly:
         self.tiempo_esperado = 0
 
     def comer(self, pepinos):
+        if not isinstance(pepinos, (int, float)):
+            raise ValueError("La cantidad de pepinos debe ser un número.")
         if pepinos < 0:
             raise ValueError("La cantidad de pepinos no puede ser negativa.")
+        if pepinos > 100:
+            raise ValueError("No se pueden comer más de 100 pepinos.")
         print(f"He comido {pepinos} pepinos.")
         self.pepinos_comidos += pepinos
 

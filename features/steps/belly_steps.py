@@ -81,7 +81,10 @@ def generar_tiempo_aleatorio(expresion):
 
 @given('que he comido {cukes:d} pepinos')
 def step_given_eaten(context, cukes):
-    context.belly.comer(cukes)
+    try:
+        context.belly.comer(cukes)
+    except ValueError as e:
+        context.error = str(e)
 
 @when('espero {time_description}')
 def step_when_wait(context, time_description):
@@ -109,3 +112,8 @@ def step_then_deberia_gruñir(context):
 @then('mi estómago no debería gruñir')
 def step_then_no_deberia_gruñir(context):
     assert context.belly.esta_gruñendo() is False, f"Se esperaba que el estómago no gruñera, pero lo hizo. Pepinos: {context.belly.pepinos_comidos}, Tiempo: {context.belly.tiempo_esperado}"
+
+@then('debería recibir un error que dice "{error_message}"')
+def step_then_error(context, error_message):
+    assert hasattr(context, 'error'), f"No se lanzó ninguna excepción, pero se esperaba: '{error_message}'"
+    assert context.error == error_message, f"Se esperaba el mensaje de error '{error_message}', pero se recibió '{context.error}'"

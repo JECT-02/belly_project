@@ -61,3 +61,13 @@ Escenario: comer pepinos y esperar un tiempo aleatorio entre 1 y 3 horas
   Dado que he comido 20 pepinos
   Cuando espero un tiempo aleatorio entre 1 y 3 horas
   Entonces mi estómago podría gruñir
+
+@spanish
+Escenario: intentar comer una cantidad negativa de pepinos
+  Dado que he comido -5 pepinos
+  Entonces debería recibir un error que dice "La cantidad de pepinos no puede ser negativa."
+
+@spanish
+Escenario: intentar comer más de 100 pepinos
+  Dado que he comido 101 pepinos
+  Entonces debería recibir un error que dice "No se pueden comer más de 100 pepinos."

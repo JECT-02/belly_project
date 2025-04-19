@@ -32,3 +32,13 @@ def test_comer_pepinos_negativos():
     belly = Belly()
     with pytest.raises(ValueError, match="La cantidad de pepinos no puede ser negativa."):
         belly.comer(-5)  # Intentar comer -5
+
+def test_comer_mas_de_100_pepinos():
+    belly = Belly()
+    with pytest.raises(ValueError, match="No se pueden comer más de 100 pepinos."):
+        belly.comer(101)  # Intentar comer 101
+
+def test_comer_tipo_no_numerico():
+    belly = Belly()
+    with pytest.raises(ValueError, match="La cantidad de pepinos debe ser un número."):
+        belly.comer("cinco")  # Intentar comer un string
