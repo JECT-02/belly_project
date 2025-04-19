@@ -51,23 +51,35 @@ def convertir_palabra_a_numero(palabra):
         return total + current
 
 def parse_time_description(desc):
+    original = desc
     desc = desc.lower().strip().replace('"', '')
+    # Quitar conectores y comas
+    desc = desc.replace(',', ' ')
+    desc = desc.replace(' y ', ' ')
+    desc = desc.replace(' and ', ' ')
+
+    # Unidades a horas
     time_units = {
         "hora": 1, "horas": 1, "hour": 1, "hours": 1,
         "minuto": 1/60, "minutos": 1/60, "minute": 1/60, "minutes": 1/60,
         "segundo": 1/3600, "segundos": 1/3600, "second": 1/3600, "seconds": 1/3600,
     }
-    total_hours = 0.0
-    # Separar por unidad
+
+    # Dividir manteniendo las unidades
     partes = re.split(r'(hora[s]?|hour[s]?|minuto[s]?|minute[s]?|segundo[s]?|second[s]?)', desc)
+    if len(partes) < 3:
+        raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original}'")
+
+    total_hours = 0.0
     i = 0
     while i < len(partes) - 1:
         valor = partes[i].strip()
-        unidad = partes[i+1].strip()
+        unidad = partes[i + 1].strip()
         if valor:
             cantidad = convertir_palabra_a_numero(valor)
             total_hours += cantidad * time_units[unidad]
         i += 2
+
     return total_hours
 
 # PASOS DE TEST
