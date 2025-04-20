@@ -25,20 +25,28 @@ def test_invalid_time_description():
 
 def test_comer_pepinos_fraccionarios():
     belly = Belly()
-    belly.comer(2.5)  # Comer 2.5
+    belly.comer(2.5)
     assert belly.pepinos_comidos == 2.5
 
 def test_comer_pepinos_negativos():
     belly = Belly()
     with pytest.raises(ValueError, match="La cantidad de pepinos no puede ser negativa."):
-        belly.comer(-5)  # Intentar comer -5
+        belly.comer(-5)
 
-def test_comer_mas_de_100_pepinos():
+def test_comer_mas_de_10000_pepinos():
     belly = Belly()
-    with pytest.raises(ValueError, match="No se pueden comer más de 100 pepinos."):
-        belly.comer(101)  # Intentar comer 101
+    with pytest.raises(ValueError, match="No se pueden comer más de 10000 pepinos."):
+        belly.comer(10001)
 
 def test_comer_tipo_no_numerico():
     belly = Belly()
     with pytest.raises(ValueError, match="La cantidad de pepinos debe ser un número."):
-        belly.comer("cinco")  # Intentar comer un string
+        belly.comer("cinco")
+
+def test_comer_gran_cantidad_y_esperar_mucho():
+    belly = Belly()
+    belly.comer(1000)
+    belly.esperar(10)
+    assert belly.pepinos_comidos == 1000
+    assert belly.tiempo_esperado == 10
+    assert belly.esta_gruñendo() is True

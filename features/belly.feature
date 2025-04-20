@@ -68,6 +68,12 @@ Escenario: intentar comer una cantidad negativa de pepinos
   Entonces debería recibir un error que dice "La cantidad de pepinos no puede ser negativa."
 
 @spanish
-Escenario: intentar comer más de 100 pepinos
-  Dado que he comido 101 pepinos
-  Entonces debería recibir un error que dice "No se pueden comer más de 100 pepinos."
+Escenario: intentar comer más de 10000 pepinos
+  Dado que he comido 10001 pepinos
+  Entonces debería recibir un error que dice "No se pueden comer más de 10000 pepinos."
+
+@spanish
+Escenario: comer una gran cantidad de pepinos y esperar mucho tiempo
+  Dado que he comido 1000 pepinos
+  Cuando espero 10 horas
+  Entonces mi estómago debería gruñir
