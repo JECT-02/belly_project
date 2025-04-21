@@ -40,7 +40,7 @@ jobs:
           path: reports/behave/
 
   pytest:
-    name: Pytest
+    name: Pytest + Coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
@@ -54,44 +54,24 @@ jobs:
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
-          pip install behave pytest
+          pip install pytest coverage
 
-      - name: Medir tiempo de ejecución de Pytest
+      - name: Ejecutar tests con coverage
         run: |
-          start_time=$(date +%s)
-          pytest test_belly.py -v
-          end_time=$(date +%s)
-          echo "Tiempo de ejecución de Pytest: $((end_time - start_time)) segundos"
+          coverage run -m pytest
+          coverage report
+          coverage xml
+          coverage html
 
-      - name: Archivar reportes de Pytest
-        if: always()
+      - name: Subir cobertura XML
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-reports
-          path: reports/pytest/
+          name: coverage-xml
+          path: coverage.xml
 
-  stress-tests:
-    name: Stress Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
-
-      - name: Configurar Python
-        uses: actions/setup-python@v5
+      - name: Subir cobertura HTML
+        uses: actions/upload-artifact@v4
         with:
-          python-version: '3.12'
+          name: coverage-html
+          path: htmlcov/
 
-      - name: Instalar dependencias
-        run: |
-          python -m pip install --upgrade pip
-          pip install behave pytest
-
-      - name: Ejecutar pruebas de estrés
-        run: |
-          start_time=$(date +%s)
-          for i in {1..1000}; do
-            python -c "from src.belly import Belly; belly = Belly(); belly.comer(1000); belly.esperar(10); assert belly.esta_gruñendo()"
-          done
-          end_time=$(date +%s)
-          echo "Tiempo de ejecución de pruebas de estrés (1000 iteraciones): $((end_time - start_time)) segundos"

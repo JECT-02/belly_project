@@ -7,8 +7,10 @@ numeros = {
     "seis": 6, "siete": 7, "ocho": 8, "nueve": 9, "diez": 10, "once": 11,
     "doce": 12, "trece": 13, "catorce": 14, "quince": 15, "dieciséis": 16,
     "diecisiete": 17, "dieciocho": 18, "diecinueve": 19, "veinte": 20,
-    "treinta": 30, "cuarenta": 40, "cincuenta": 50, "sesenta": 60, "setenta": 70,
-    "ochenta": 80, "noventa": 90, "cien": 100, "media": 0.5,
+    "veintiuno": 21, "veintidós": 22, "veintitrés": 23, "veinticuatro": 24,
+    "veinticinco": 25, "veintiséis": 26, "veintisiete": 27, "veintiocho": 28,
+    "veintinueve": 29, "treinta": 30, "cuarenta": 40, "cincuenta": 50, 
+    "sesenta": 60, "setenta": 70, "ochenta": 80, "noventa": 90, "cien": 100, "media": 0.5,
     "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
     "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11,
     "twelve": 12, "thirteen": 13, "fourteen": 14, "fifteen": 15, "sixteen": 16,
@@ -19,54 +21,125 @@ numeros = {
 
 def convertir_palabra_a_numero(palabra):
     try:
+        # Intentar convertir directamente a float
         return float(palabra)
     except ValueError:
-        palabra = palabra.lower()
+        palabra = palabra.lower().strip()
         if palabra in numeros:
             return numeros[palabra]
-        palabras = palabra.split()
-        total = current = 0
-        decimal_part = False
-        decimal_factor = 0.1
+        
+        # Manejar palabras compuestas como "forty-five" o "cuarenta y cinco"
+        # Split on hyphens and spaces
+        palabras = palabra.replace('-', ' ').split()
+        total = 0
+        current = 0
         for p in palabras:
-            if p in ["point", "coma", "punto"]:
-                decimal_part = True
-                continue
             if p in ["and", "y"]:
                 continue
             if p in numeros:
                 value = numeros[p]
-                if decimal_part:
-                    total += value * decimal_factor
-                    decimal_factor /= 10
-                elif value == 100 and current != 0:
+                if value >= 100:  # Manejar centenas
                     current *= value
+                elif current > 0 and value < 10:  # Manejar decimales como "cuarenta y cinco"
+                    current += value
                 else:
                     current += value
             else:
-                raise ValueError(f"No se pudo convertir la palabra '{palabra}' a número.")
-        return total + current
+                raise ValueError(f"No se pudo convertir la palabra '{p}' en '{palabra}' a número.")
+        total += current
+        return total
 
 def parse_time_description(desc):
     original = desc
+    # Normalizar entrada: eliminar comillas, reemplazar separadores por espacios
     desc = desc.lower().strip().replace('"', '').replace(',', ' ').replace(' y ', ' ').replace(' and ', ' ')
+    desc = re.sub(r'\s+', ' ', desc)  # Reemplazar múltiples espacios por uno solo
+    
+    # Verificar si la descripción es válida antes de procesarla
+    if not re.search(r'(hora|horas|hour|hours|minuto|minutos|minute|minutes|segundo|segundos|second|seconds)', desc):
+        raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original}'")
+    
     time_units = {
         "hora": 1, "horas": 1, "hour": 1, "hours": 1,
         "minuto": 1/60, "minutos": 1/60, "minute": 1/60, "minutes": 1/60,
         "segundo": 1/3600, "segundos": 1/3600, "second": 1/3600, "seconds": 1/3600
     }
-    partes = re.split(r'(hora[s]?|hour[s]?|minuto[s]?|minute[s]?|segundo[s]?|second[s]?)', desc)
-    if len(partes) < 3:
+    
+    # Expresión regular mejorada para capturar valor y unidad
+    pattern = r'(\S+(?:\s+(?:y|and)\s+\S+)*)\s+(hora[s]?|hour[s]?|minuto[s]?|minute[s]?|segundo[s]?|second[s]?)'
+    matches = re.findall(pattern, desc)
+    
+    if not matches:
         raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original}'")
+    
+    # Verificar que toda la descripción fue procesada
+    parsed_parts = []
+    for valor, unidad in matches:
+        parsed_parts.append(f"{valor} {unidad}")
+    parsed_desc = ' '.join(parsed_parts)
+    
+    if parsed_desc != desc:
+        raise ValueError(f"No se pudo interpretar completamente la descripción del tiempo: '{original}'. Partes no procesadas: '{desc[len(parsed_desc):].strip()}'")
+    
     total = 0
-    i = 0
-    while i < len(partes) - 1:
-        valor = partes[i].strip()
-        unidad = partes[i + 1].strip()
+    for valor, unidad in matches:
         if valor:
-            cantidad = convertir_palabra_a_numero(valor)
-            total += cantidad * time_units[unidad]
-        i += 2
+            try:
+                cantidad = convertir_palabra_a_numero(valor)
+                for unit_name, unit_value in time_units.items():
+                    if unidad.startswith(unit_name):
+                        total += cantidad * unit_value
+                        break
+                else:
+                    raise ValueError(f"Unidad de tiempo desconocida: '{unidad}'")
+            except ValueError as e:
+                raise ValueError(f"Error al procesar '{valor} {unidad}' en '{original}': {str(e)}")
+    
+    if total == 0:
+        raise ValueError(f"No se pudo calcular un tiempo válido a partir de: '{original}'")
+    
+    return total
+    
+def parse_time_description(desc):
+    original = desc
+    # Normalizar entrada: eliminar comillas, reemplazar separadores por espacios
+    desc = desc.lower().strip().replace('"', '').replace(',', ' ').replace(' y ', ' ').replace(' and ', ' ')
+    desc = re.sub(r'\s+', ' ', desc)  # Reemplazar múltiples espacios por uno solo
+    
+    # Verificar si la descripción es válida antes de procesarla
+    if not re.search(r'(hora|horas|hour|hours|minuto|minutos|minute|minutes|segundo|segundos|second|seconds)', desc):
+        raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original}'")
+    
+    time_units = {
+        "hora": 1, "horas": 1, "hour": 1, "hours": 1,
+        "minuto": 1/60, "minutos": 1/60, "minute": 1/60, "minutes": 1/60,
+        "segundo": 1/3600, "segundos": 1/3600, "second": 1/3600, "seconds": 1/3600
+    }
+    
+    # Expresión regular mejorada para capturar valor y unidad
+    pattern = r'(\S+(?:\s+(?:y|and)\s+\S+)*)\s+(hora[s]?|hour[s]?|minuto[s]?|minute[s]?|segundo[s]?|second[s]?)'
+    matches = re.findall(pattern, desc)
+    
+    if not matches:
+        raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original}'")
+    
+    total = 0
+    for valor, unidad in matches:
+        if valor:
+            try:
+                cantidad = convertir_palabra_a_numero(valor)
+                for unit_name, unit_value in time_units.items():
+                    if unidad.startswith(unit_name):
+                        total += cantidad * unit_value
+                        break
+                else:
+                    raise ValueError(f"Unidad de tiempo desconocida: '{unidad}'")
+            except ValueError as e:
+                raise ValueError(f"Error al procesar '{valor} {unidad}' en '{original}': {str(e)}")
+    
+    if total == 0:
+        raise ValueError(f"No se pudo calcular un tiempo válido a partir de: '{original}'")
+    
     return total
 
 def generar_tiempo_aleatorio(expresion):

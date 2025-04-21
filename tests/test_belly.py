@@ -18,10 +18,22 @@ def test_parse_time_description_with_english():
     assert parse_time_description("two hours") == 2.0
     assert parse_time_description("thirty minutes") == 0.5
     assert parse_time_description("one hour and fifteen minutes") == 1.25
+    assert parse_time_description("one hour, thirty minutes and forty-five seconds") == pytest.approx(1.5125, 0.001)
+
+def test_parse_time_description_complex():
+    assert parse_time_description("2 horas, 30 minutos y 15 segundos") == pytest.approx(2.504167, 0.001)
+    assert parse_time_description("tres horas y cuarenta y cinco minutos, quince segundos") == pytest.approx(3.754167, 0.001)
+    assert parse_time_description("1 hora, 20 minutos, 30 segundos") == pytest.approx(1.341667, 0.001)
+    assert parse_time_description("dos horas y media") == 2.5
+    assert parse_time_description("one and a half hours") == 1.5
 
 def test_invalid_time_description():
     with pytest.raises(ValueError):
         parse_time_description("invalid description")
+    with pytest.raises(ValueError):
+        parse_time_description("2 horas y nada")
+    with pytest.raises(ValueError):
+        parse_time_description("one hour and something")
 
 def test_comer_pepinos_fraccionarios():
     belly = Belly()
@@ -50,3 +62,11 @@ def test_comer_gran_cantidad_y_esperar_mucho():
     assert belly.pepinos_comidos == 1000
     assert belly.tiempo_esperado == 10
     assert belly.esta_gruñendo() is True
+
+def test_no_gruñir_con_tiempo_insuficiente():
+    belly = Belly()
+    belly.comer(30)
+    belly.esperar(parse_time_description("1 hora, 20 minutos, 30 segundos"))
+    assert belly.pepinos_comidos == 30
+    assert belly.tiempo_esperado == pytest.approx(1.341667, 0.001)
+    assert belly.esta_gruñendo() is False

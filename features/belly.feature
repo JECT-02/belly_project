@@ -77,3 +77,21 @@ Escenario: comer una gran cantidad de pepinos y esperar mucho tiempo
   Dado que he comido 1000 pepinos
   Cuando espero 10 horas
   Entonces mi estómago debería gruñir
+
+@spanish
+Escenario: esperar con múltiples separadores y unidades
+  Dado que he comido 20 pepinos
+  Cuando espero "2 horas, 30 minutos y 15 segundos"
+  Entonces mi estómago debería gruñir
+
+@spanish
+Escenario: esperar con descripción compleja en español
+  Dado que he comido 25 pepinos
+  Cuando espero "tres horas y cuarenta y cinco minutos, quince segundos"
+  Entonces mi estómago debería gruñir
+
+@spanish
+Escenario: esperar con descripción compleja con comas y espacios
+  Dado que he comido 30 pepinos
+  Cuando espero "1 hora, 20 minutos, 30 segundos"
+  Entonces mi estómago no debería gruñir
