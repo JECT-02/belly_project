@@ -1,6 +1,7 @@
 from behave import given, when, then
 import re
 import random
+from datetime import datetime, timedelta
 
 numeros = {
     "cero": 0, "uno": 1, "una": 1, "dos": 2, "tres": 3, "cuatro": 4, "cinco": 5,
@@ -142,9 +143,27 @@ def step_when_wait(context, time_description):
     except ValueError as e:
         context.error = str(e)
 
+@when('han pasado {time_description} desde la última comida')
+def step_when_time_passed(context, time_description):
+    time_description = time_description.strip()
+    try:
+        total_time = float(time_description.replace('"', '').replace(',', '.'))
+    except ValueError:
+        total_time = parse_time_description(time_description)
+    
+    # Configurar el mock para devolver un tiempo futuro
+    base_time = context.belly.last_meal_time
+    if base_time is None:
+        base_time = datetime(2023, 1, 1, 12, 0, 0)
+    context.belly.clock_service.get_current_time.side_effect = [base_time + timedelta(hours=total_time)]
+
 @when('pregunto cuántos pepinos más necesito para gruñir')
 def step_ask_pepinos_faltantes(context):
     context.faltantes = context.belly.pepinos_faltantes()
+
+@when('pregunto cuánto tiempo ha transcurrido')
+def step_ask_tiempo_transcurrido(context):
+    context.tiempo_transcurrido = context.belly.tiempo_transcurrido()
 
 @then('mi estómago podría gruñir')
 def step_then_podria_gruñir(context):
@@ -174,3 +193,7 @@ def step_then_predict_gruñir(context):
 @then('debería decirme que necesito {expected:d} pepinos más')
 def step_then_pepinos_faltantes(context, expected):
     assert context.faltantes == expected
+
+@then('debería decirme que han pasado {expected:g} horas')
+def step_then_tiempo_transcurrido(context, expected):
+    assert context.tiempo_transcurrido == expected

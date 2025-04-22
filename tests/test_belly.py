@@ -1,6 +1,9 @@
 import pytest
 from src.belly import Belly
+from src.clock import Clock
 from features.steps.belly_steps import parse_time_description
+from datetime import datetime, timedelta
+from unittest.mock import Mock
 
 def test_parse_time_description():
     assert parse_time_description("1 hora") == 1.0
@@ -90,10 +93,18 @@ def test_pepinos_faltantes():
     belly = Belly()
     belly.comer(8)
     belly.esperar(2)
-    assert belly.pepinos_faltantes() == 3  # 11 - 8
+    assert belly.pepinos_faltantes() == 3
     belly.comer(3)
-    assert belly.pepinos_faltantes() == 0  # Ya gruñe
+    assert belly.pepinos_faltantes() == 0
     belly.reset()
     belly.comer(15)
     belly.esperar(1)
-    assert belly.pepinos_faltantes() == 0  # Tiempo insuficiente
+    assert belly.pepinos_faltantes() == 0
+
+def test_tiempo_transcurrido():
+    mock_clock = Mock()
+    base_time = datetime(2023, 1, 1, 12, 0, 0)
+    mock_clock.get_current_time.side_effect = [base_time, base_time + timedelta(hours=2)]
+    belly = Belly(clock_service=mock_clock)
+    belly.comer(10)
+    assert belly.tiempo_transcurrido() == 2.0

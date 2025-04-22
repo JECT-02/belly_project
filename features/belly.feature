@@ -172,3 +172,10 @@ Escenario: Calcular pepinos faltantes cuando ya gruñe
   Cuando espero 2 horas
   Y pregunto cuántos pepinos más necesito para gruñir
   Entonces debería decirme que necesito 0 pepinos más
+
+@spanish
+Escenario: Verificar tiempo transcurrido desde la última comida
+  Dado que he comido 10 pepinos
+  Cuando han pasado 2 horas desde la última comida
+  Y pregunto cuánto tiempo ha transcurrido
+  Entonces debería decirme que han pasado 2 horas

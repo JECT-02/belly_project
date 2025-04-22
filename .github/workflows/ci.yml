@@ -3,42 +3,6 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  behave-tests:
-    name: Behave Tests (${{ matrix.lang }})
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        lang: [spanish, english]
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
-
-      - name: Configurar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Instalar dependencias
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Ejecutar Behave
-        env:
-          RANDOM_SEED: 42
-        run: |
-          start_time=$(date +%s)
-          behave -t @${{ matrix.lang }} --no-capture --no-capture-stderr --junit --junit-directory reports/behave
-          end_time=$(date +%s)
-          echo "Tiempo de ejecución de Behave (${{ matrix.lang }}): $((end_time - start_time)) segundos"
-
-      - name: Archivar reportes de Behave
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: behave-reports-${{ matrix.lang }}
-          path: reports/behave/
-
   pytest:
     name: Pytest + Coverage
     runs-on: ubuntu-latest
@@ -51,6 +15,14 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Cachear dependencias
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
@@ -59,7 +31,7 @@ jobs:
       - name: Ejecutar tests con coverage
         run: |
           coverage run -m pytest
-          coverage report
+          coverage report --fail-under=80
           coverage xml
           coverage html
 
@@ -68,10 +40,73 @@ jobs:
         with:
           name: coverage-xml
           path: coverage.xml
+          retention-days: 7
 
       - name: Subir cobertura HTML
         uses: actions/upload-artifact@v4
         with:
           name: coverage-html
           path: htmlcov/
+          retention-days: 7
 
+  behave-tests:
+    name: Behave Tests (${{ matrix.lang }})
+    runs-on: ubuntu-latest
+    needs: pytest
+    strategy:
+      matrix:
+        lang: [spanish, english, criterio_nuevo]
+      fail-fast: true
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cachear dependencias
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ejecutar Behave
+        env:
+          RANDOM_SEED: 42
+        run: |
+          mkdir -p reports/behave
+          start_time=$(date +%s)
+          behave -t @${{ matrix.lang }} --no-capture --no-capture-stderr --junit --junit-directory reports/behave
+          end_time=$(date +%s)
+          echo "Tiempo de ejecución de Behave (${{ matrix.lang }}): $((end_time - start_time)) segundos"
+
+      - name: Archivar reportes de Behave
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: behave-reports-${{ matrix.lang }}
+          path: reports/behave/
+          retention-days: 7
+
+      - name: Comentar resultados en GitHub Issue
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 123,
+              body: `Behave tests for ${{ matrix.lang }} completed. See artifacts for JUnit reports.`
+            })
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
