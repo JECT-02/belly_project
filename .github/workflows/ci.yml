@@ -21,7 +21,7 @@ jobs:
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
-          pip install behave pytest
+          pip install -r requirements.txt
 
       - name: Medir tiempo de ejecución de Behave
         env:
@@ -54,7 +54,7 @@ jobs:
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
-          pip install pytest coverage
+          pip install -r requirements.txt
 
       - name: Ejecutar tests con coverage
         run: |
@@ -74,4 +74,5 @@ jobs:
         with:
           name: coverage-html
           path: htmlcov/
+
 

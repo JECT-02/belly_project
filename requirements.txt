@@ -1,1 +1,5 @@
 behave
+- name: Instalar dependencias
+  run: |
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
