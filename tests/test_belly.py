@@ -74,4 +74,9 @@ def test_stomach_growls_after_many_cucumbers_and_two_hours():
     belly = Belly()
     belly.comer(11)
     belly.esperar(2)
-    assert belly.esta_gruñendo() is True, "Stomach should growl after eating 11 cucumbers and waiting 2 hours"
+    assert belly.esta_gruñendo() is True
+
+def test_pepinos_comidos():
+    belly = Belly()
+    belly.comer(15)
+    assert belly.pepinos_comidos == 15

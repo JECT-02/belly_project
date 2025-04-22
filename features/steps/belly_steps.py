@@ -135,13 +135,17 @@ def step_then_podria_gruñir(context):
 
 @then('mi estómago debería gruñir')
 def step_then_deberia_gruñir(context):
-    assert context.belly.esta_gruñendo() is True, f"Se esperaba que el estómago gruñera, pero no lo hizo. Pepinos: {context.belly.pepinos_comidos}, Tiempo: {context.belly.tiempo_esperado}"
+    assert context.belly.esta_gruñendo() is True
 
 @then('mi estómago no debería gruñir')
 def step_then_no_deberia_gruñir(context):
-    assert context.belly.esta_gruñendo() is False, f"Se esperaba que el estómago no gruñera, pero lo hizo. Pepinos: {context.belly.pepinos_comidos}, Tiempo: {context.belly.tiempo_esperado}"
+    assert context.belly.esta_gruñendo() is False
 
 @then('debería recibir un error que dice "{error_message}"')
 def step_then_error(context, error_message):
-    assert hasattr(context, 'error'), f"No se lanzó ninguna excepción, pero se esperaba: '{error_message}'"
-    assert context.error == error_message, f"Se esperaba el mensaje de error '{error_message}', pero se recibió '{context.error}'"
+    assert hasattr(context, 'error')
+    assert context.error == error_message
+
+@then('debería haber comido {expected:d} pepinos')
+def step_then_pepinos_comidos(context, expected):
+    assert context.belly.pepinos_comidos == expected

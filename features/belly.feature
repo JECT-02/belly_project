@@ -59,6 +59,12 @@ Escenario: Intentar esperar un tiempo negativo
   Entonces debería recibir un error que dice "El tiempo de espera no puede ser negativo."
 
 @spanish
+Escenario: Intentar esperar un tiempo excesivo
+  Dado que he comido 20 pepinos
+  Cuando espero 100001 horas
+  Entonces debería recibir un error que dice "El tiempo de espera no puede exceder 100000 horas."
+
+@spanish
 Escenario: comer muchos pepinos y gruñir
   Dado que he comido 42 pepinos
   Cuando espero 2 horas
@@ -135,3 +141,8 @@ Escenario: esperar con descripción compleja con comas y espacios
   Dado que he comido 30 pepinos
   Cuando espero "1 hora, 20 minutos, 30 segundos"
   Entonces mi estómago no debería gruñir
+
+@spanish
+Escenario: Saber cuántos pepinos he comido
+  Dado que he comido 15 pepinos
+  Entonces debería haber comido 15 pepinos

@@ -16,7 +16,6 @@ class Belly:
             raise ValueError("La cantidad de pepinos no puede ser negativa.")
         if pepinos > 10000:
             raise ValueError("No se pueden comer más de 10000 pepinos.")
-        print(f"He comido {pepinos} pepinos.")
         self.pepinos_comidos += pepinos
 
     def esperar(self, tiempo_en_horas):
@@ -32,3 +31,6 @@ class Belly:
 
     def esta_gruñendo(self):
         return self.tiempo_esperado >= 1.5 and self.pepinos_comidos > 10
+
+    def pepinos_comidos(self):
+        return self.pepinos_comidos
