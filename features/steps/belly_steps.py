@@ -50,11 +50,9 @@ def convertir_palabra_a_numero(palabra):
 
 def parse_time_description(desc):
     original = desc
-    # Normalizar entrada: eliminar comillas, reemplazar separadores por espacios
     desc = desc.lower().strip().replace('"', '').replace(',', ' ').replace(' y ', ' ').replace(' and ', ' ')
     desc = re.sub(r'\s+', ' ', desc)  # Reemplazar múltiples espacios por uno solo
     
-    # Verificar si hay al menos una unidad de tiempo válida
     if not re.search(r'(hora|horas|hour|hours|minuto|minutos|minute|minutes|segundo|segundos|second|seconds)', desc):
         raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original}'")
     
