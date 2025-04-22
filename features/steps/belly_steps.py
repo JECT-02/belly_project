@@ -2,7 +2,6 @@ from behave import given, when, then
 import re
 import random
 
-# Diccionario de números con "media" añadida
 numeros = {
     "cero": 0, "uno": 1, "una": 1, "dos": 2, "tres": 3, "cuatro": 4, "cinco": 5,
     "seis": 6, "siete": 7, "ocho": 8, "nueve": 9, "diez": 10, "once": 11,
@@ -12,7 +11,7 @@ numeros = {
     "veinticinco": 25, "veintiséis": 26, "veintisiete": 27, "veintiocho": 28,
     "veintinueve": 29, "treinta": 30, "cuarenta": 40, "cincuenta": 50, 
     "sesenta": 60, "setenta": 70, "ochenta": 80, "noventa": 90, "cien": 100,
-    "media": 0.5,  # Añadido
+    "media": 0.5,
     "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
     "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11,
     "twelve": 12, "thirteen": 13, "fourteen": 14, "fifteen": 15, "sixteen": 16,
@@ -23,14 +22,12 @@ numeros = {
 
 def convertir_palabra_a_numero(palabra):
     try:
-        # Intentar convertir directamente a float
         return float(palabra)
     except ValueError:
         palabra = palabra.lower().strip()
         if palabra in numeros:
             return numeros[palabra]
         
-        # Manejar palabras compuestas como "forty-five" o "cuarenta y cinco"
         palabras = palabra.replace('-', ' ').split()
         total = 0
         current = 0
@@ -39,7 +36,7 @@ def convertir_palabra_a_numero(palabra):
                 continue
             if p in numeros:
                 value = numeros[p]
-                if value >= 100:  # Manejar centenas
+                if value >= 100:
                     current *= value
                 else:
                     current += value
@@ -51,7 +48,7 @@ def convertir_palabra_a_numero(palabra):
 def parse_time_description(desc):
     original = desc
     desc = desc.lower().strip().replace('"', '').replace(',', ' ').replace(' y ', ' ').replace(' and ', ' ')
-    desc = re.sub(r'\s+', ' ', desc)  # Reemplazar múltiples espacios por uno solo
+    desc = re.sub(r'\s+', ' ', desc)
     
     if not re.search(r'(hora|horas|hour|hours|minuto|minutos|minute|minutes|segundo|segundos|second|seconds)', desc):
         raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original}'")
@@ -65,7 +62,7 @@ def parse_time_description(desc):
     tokens = desc.split()
     valor_acumulado = []
     total = 0
-    ultima_unidad = None  # Para manejar casos como "dos horas y media"
+    ultima_unidad = None
     
     for token in tokens:
         if token in time_units:
@@ -82,7 +79,6 @@ def parse_time_description(desc):
         else:
             valor_acumulado.append(token)
     
-    # Si queda un valor acumulado, asumimos que usa la última unidad
     if valor_acumulado:
         if ultima_unidad:
             valor = ' '.join(valor_acumulado)
@@ -120,7 +116,6 @@ def step_given_eaten(context, cukes):
 def step_when_wait(context, time_description):
     time_description = time_description.strip()
     
-    # Verificar si es un tiempo aleatorio
     if time_description.lower().startswith("un tiempo aleatorio entre"):
         total_time = generar_tiempo_aleatorio(time_description)
     else:
@@ -129,7 +124,10 @@ def step_when_wait(context, time_description):
         except ValueError:
             total_time = parse_time_description(time_description)
     
-    context.belly.esperar(total_time)
+    try:
+        context.belly.esperar(total_time)
+    except ValueError as e:
+        context.error = str(e)
 
 @then('mi estómago podría gruñir')
 def step_then_podria_gruñir(context):

@@ -1,6 +1,62 @@
 # language: es
 
-Característica: Característica del estómago
+Característica: Saber si mi estómago gruñirá después de comer pepinos
+
+  Como usuario que ha comido pepinos,
+  Quiero saber si mi estómago va a gruñir después de esperar un tiempo suficiente,
+  Para poder tomar una acción.
+
+@spanish
+Escenario: Comer suficientes pepinos y esperar el tiempo adecuado
+  Dado que he comido 20 pepinos
+  Cuando espero 2 horas
+  Entonces mi estómago debería gruñir
+
+@spanish
+Escenario: Comer pocos pepinos y no esperar suficiente tiempo
+  Dado que he comido 5 pepinos
+  Cuando espero 1 hora
+  Entonces mi estómago no debería gruñir
+
+@spanish
+Escenario: Comer suficientes pepinos pero esperar poco tiempo
+  Dado que he comido 15 pepinos
+  Cuando espero 1 hora
+  Entonces mi estómago no debería gruñir
+
+@spanish
+Escenario: Comer suficientes pepinos y esperar con formato complejo
+  Dado que he comido 25 pepinos
+  Cuando espero "1 hora, 30 minutos y 45 segundos"
+  Entonces mi estómago debería gruñir
+
+@english
+Escenario: Comer suficientes pepinos y esperar en inglés
+  Dado que he comido 30 pepinos
+  Cuando espero "two hours and thirty minutes"
+  Entonces mi estómago debería gruñir
+
+@spanish @random
+Escenario: Comer suficientes pepinos y esperar un tiempo aleatorio
+  Dado que he comido 20 pepinos
+  Cuando espero un tiempo aleatorio entre 1 y 3 horas
+  Entonces mi estómago podría gruñir
+
+@spanish
+Escenario: Intentar comer una cantidad negativa de pepinos
+  Dado que he comido -1 pepinos
+  Entonces debería recibir un error que dice "La cantidad de pepinos no puede ser negativa."
+
+@spanish
+Escenario: Intentar comer más de 10000 pepinos
+  Dado que he comido 10001 pepinos
+  Entonces debería recibir un error que dice "No se pueden comer más de 10000 pepinos."
+
+@spanish
+Escenario: Intentar esperar un tiempo negativo
+  Dado que he comido 20 pepinos
+  Cuando espero -1 hora
+  Entonces debería recibir un error que dice "El tiempo de espera no puede ser negativo."
 
 @spanish
 Escenario: comer muchos pepinos y gruñir
@@ -50,27 +106,11 @@ Escenario: comer pepinos y esperar con tiempo decimal mayor
   Cuando espero 2.75 horas
   Entonces mi estómago debería gruñir
 
-@english
-Escenario: comer pepinos y esperar en inglés
-  Dado que he comido 20 pepinos
-  Cuando espero "two hours and thirty minutes"
-  Entonces mi estómago debería gruñir
-
 @spanish @random
 Escenario: comer pepinos y esperar un tiempo aleatorio entre 1 y 3 horas
   Dado que he comido 20 pepinos
   Cuando espero un tiempo aleatorio entre 1 y 3 horas
   Entonces mi estómago podría gruñir
-
-@spanish
-Escenario: intentar comer una cantidad negativa de pepinos
-  Dado que he comido -5 pepinos
-  Entonces debería recibir un error que dice "La cantidad de pepinos no puede ser negativa."
-
-@spanish
-Escenario: intentar comer más de 10000 pepinos
-  Dado que he comido 10001 pepinos
-  Entonces debería recibir un error que dice "No se pueden comer más de 10000 pepinos."
 
 @spanish
 Escenario: comer una gran cantidad de pepinos y esperar mucho tiempo
@@ -95,9 +135,3 @@ Escenario: esperar con descripción compleja con comas y espacios
   Dado que he comido 30 pepinos
   Cuando espero "1 hora, 20 minutos, 30 segundos"
   Entonces mi estómago no debería gruñir
-
-@spanish
-Escenario: comer más de diez pepinos y esperar dos horas hace que el estómago gruñir
-  Dado que he comido 11 pepinos
-  Cuando espero 2 horas
-  Entonces mi estómago debería gruñir
