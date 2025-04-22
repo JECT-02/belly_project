@@ -108,3 +108,30 @@ def test_tiempo_transcurrido():
     belly = Belly(clock_service=mock_clock)
     belly.comer(10)
     assert belly.tiempo_transcurrido() == 2.0
+
+def test_comer_pepinos_cero():
+    belly = Belly()
+    belly.comer(0)
+    assert belly.pepinos_comidos == 0
+
+def test_esperar_tiempo_cero():
+    belly = Belly()
+    belly.esperar(0)
+    assert belly.tiempo_esperado == 0
+
+def test_tiempo_transcurrido_sin_comida():
+    belly = Belly()
+    assert belly.tiempo_transcurrido() == 0
+
+def test_tiempo_transcurrido_con_multiples_comidas():
+    mock_clock = Mock()
+    base_time = datetime(2023, 1, 1, 12, 0, 0)
+    mock_clock.get_current_time.side_effect = [
+        base_time,
+        base_time + timedelta(hours=1),
+        base_time + timedelta(hours=2)
+    ]
+    belly = Belly(clock_service=mock_clock)
+    belly.comer(5)
+    belly.comer(5)
+    assert belly.tiempo_transcurrido() == 1.0  # Última comida fue en base_time + 1 hora

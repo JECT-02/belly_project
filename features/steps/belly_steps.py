@@ -21,7 +21,7 @@ numeros = {
     "eighty": 80, "ninety": 90, "hundred": 100, "half": 0.5
 }
 
-def convertir_palabra_a_numero(palabra):
+def convertir_palabra_a_numero(palabra, original_desc):
     try:
         return float(palabra)
     except ValueError:
@@ -42,7 +42,8 @@ def convertir_palabra_a_numero(palabra):
                 else:
                     current += value
             else:
-                raise ValueError(f"No se pudo convertir la palabra '{p}' en '{palabra}' a número.")
+                # Usamos la descripción original en el mensaje de error
+                raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original_desc.strip('"')}'")
         total += current
         return total
 
@@ -52,7 +53,7 @@ def parse_time_description(desc):
     desc = re.sub(r'\s+', ' ', desc)
     
     if not re.search(r'(hora|horas|hour|hours|minuto|minutos|minute|minutes|segundo|segundos|second|seconds)', desc):
-        raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original}'")
+        raise ValueError(f"No se pudo interpretar la descripción del tiempo: '{original.strip('"')}'")
     
     time_units = {
         "hora": 1, "horas": 1, "hour": 1, "hours": 1,
@@ -68,9 +69,9 @@ def parse_time_description(desc):
     for token in tokens:
         if token in time_units:
             if not valor_acumulado:
-                raise ValueError(f"Unidad '{token}' sin valor en '{original}'")
+                raise ValueError(f"Unidad '{token}' sin valor en '{original.strip('"')}'")
             valor = ' '.join(valor_acumulado)
-            cantidad = convertir_palabra_a_numero(valor)
+            cantidad = convertir_palabra_a_numero(valor, original)  # Pasamos la descripción original
             for unit_name, unit_value in time_units.items():
                 if token.startswith(unit_name):
                     total += cantidad * unit_value
@@ -83,16 +84,16 @@ def parse_time_description(desc):
     if valor_acumulado:
         if ultima_unidad:
             valor = ' '.join(valor_acumulado)
-            cantidad = convertir_palabra_a_numero(valor)
+            cantidad = convertir_palabra_a_numero(valor, original)  # Pasamos la descripción original
             for unit_name, unit_value in time_units.items():
                 if ultima_unidad.startswith(unit_name):
                     total += cantidad * unit_value
                     break
         else:
-            raise ValueError(f"Valor sin unidad al final: '{' '.join(valor_acumulado)}' en '{original}'")
+            raise ValueError(f"Valor sin unidad al final: '{' '.join(valor_acumulado)}' en '{original.strip('"')}'")
     
     if total == 0:
-        raise ValueError(f"No se pudo calcular un tiempo válido a partir de: '{original}'")
+        raise ValueError(f"No se pudo calcular un tiempo válido a partir de: '{original.strip('"')}'")
     
     return total
 
@@ -136,7 +137,11 @@ def step_when_wait(context, time_description):
         try:
             total_time = float(time_description.replace('"', '').replace(',', '.'))
         except ValueError:
-            total_time = parse_time_description(time_description)
+            try:
+                total_time = parse_time_description(time_description)
+            except ValueError as e:
+                context.error = str(e)  # Guardamos el error para los escenarios
+                return
     
     try:
         context.belly.esperar(total_time)
@@ -151,11 +156,11 @@ def step_when_time_passed(context, time_description):
     except ValueError:
         total_time = parse_time_description(time_description)
     
-    # Configurar el mock para devolver un tiempo futuro
+    # Configurar el mock para devolver un tiempo futuro usando context.mock_clock
     base_time = context.belly.last_meal_time
     if base_time is None:
         base_time = datetime(2023, 1, 1, 12, 0, 0)
-    context.belly.clock_service.get_current_time.side_effect = [base_time + timedelta(hours=total_time)]
+    context.mock_clock.get_current_time.return_value = base_time + timedelta(hours=total_time)
 
 @when('pregunto cuántos pepinos más necesito para gruñir')
 def step_ask_pepinos_faltantes(context):

@@ -179,3 +179,27 @@ Escenario: Verificar tiempo transcurrido desde la última comida
   Cuando han pasado 2 horas desde la última comida
   Y pregunto cuánto tiempo ha transcurrido
   Entonces debería decirme que han pasado 2 horas
+
+@spanish
+Escenario: Intentar esperar con descripción de tiempo inválida
+  Dado que he comido 20 pepinos
+  Cuando espero "invalido"
+  Entonces debería recibir un error que dice "No se pudo interpretar la descripción del tiempo: 'invalido'"
+
+@spanish
+Escenario: Intentar esperar con descripción incompleta
+  Dado que he comido 20 pepinos
+  Cuando espero "2 horas y nada"
+  Entonces debería recibir un error que dice "No se pudo interpretar la descripción del tiempo: '2 horas y nada'"
+
+@spanish
+Escenario: Parsear tiempo con números en palabras
+  Dado que he comido 20 pepinos
+  Cuando espero "dos horas y media"
+  Entonces mi estómago debería gruñir
+
+@spanish
+Escenario: Comer cero pepinos y esperar
+  Dado que he comido 0 pepinos
+  Cuando espero 2 horas
+  Entonces mi estómago no debería gruñir

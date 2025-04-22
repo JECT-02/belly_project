@@ -67,4 +67,4 @@ class Belly:
             return 0
         current_time = self.clock_service.get_current_time()
         elapsed_seconds = (current_time - self.last_meal_time).total_seconds()
-        return elapsed_seconds / 3600
+        return elapsed_seconds / 3600  # Convertir a horas
