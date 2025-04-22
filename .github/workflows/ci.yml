@@ -23,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Medir tiempo de ejecución de Behave
+      - name: Ejecutar Behave
         env:
           RANDOM_SEED: 42
         run: |
@@ -74,5 +74,4 @@ jobs:
         with:
           name: coverage-html
           path: htmlcov/
-
 
