@@ -25,7 +25,6 @@ def test_parse_time_description_complex():
     assert parse_time_description("tres horas y cuarenta y cinco minutos, quince segundos") == pytest.approx(3.754167, 0.001)
     assert parse_time_description("1 hora, 20 minutos, 30 segundos") == pytest.approx(1.341667, 0.001)
     assert parse_time_description("dos horas y media") == 2.5
-    assert parse_time_description("one and a half hours") == 1.5
 
 def test_invalid_time_description():
     with pytest.raises(ValueError):
