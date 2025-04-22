@@ -1,7 +1,6 @@
 from features.steps.belly_steps import parse_time_description
 
 class Belly:
-    # Umbrales para gruñido
     MIN_CUCUMBERS = 10
     MIN_WAIT_HOURS = 1.5
 
@@ -38,3 +37,16 @@ class Belly:
 
     def pepinos_comidos(self):
         return self.pepinos_comidos
+
+    def predecir_gruñido(self, cant_pepinos, tiempo):
+        if not isinstance(cant_pepinos, (int, float)):
+            raise ValueError("La cantidad de pepinos debe ser un número.")
+        if cant_pepinos < 0:
+            raise ValueError("La cantidad de pepinos no puede ser negativa.")
+        if cant_pepinos > 10000:
+            raise ValueError("No se pueden comer más de 10000 pepinos.")
+        if tiempo < 0:
+            raise ValueError("El tiempo de espera no puede ser negativo.")
+        if tiempo > 100000:
+            raise ValueError("El tiempo de espera no puede exceder 100000 horas.")
+        return cant_pepinos > self.MIN_CUCUMBERS and tiempo >= self.MIN_WAIT_HOURS

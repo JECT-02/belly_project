@@ -146,3 +146,8 @@ Escenario: esperar con descripción compleja con comas y espacios
 Escenario: Saber cuántos pepinos he comido
   Dado que he comido 15 pepinos
   Entonces debería haber comido 15 pepinos
+
+@spanish
+Escenario: Predecir si mi estómago gruñirá tras comer y esperar
+  Dado que planeo comer 12 pepinos y esperar 1.5 horas
+  Entonces debería predecir que mi estómago gruñirá

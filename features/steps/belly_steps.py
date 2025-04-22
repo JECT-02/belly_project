@@ -112,6 +112,19 @@ def step_given_eaten(context, cukes):
     except ValueError as e:
         context.error = str(e)
 
+@given('que planeo comer {cukes:d} pepinos y esperar {time_description}')
+def step_given_plan(context, cukes, time_description):
+    try:
+        time_description = time_description.strip()
+        try:
+            total_time = float(time_description.replace('"', '').replace(',', '.'))
+        except ValueError:
+            total_time = parse_time_description(time_description)
+        context.predicted_cukes = cukes
+        context.predicted_time = total_time
+    except ValueError as e:
+        context.error = str(e)
+
 @when('espero {time_description}')
 def step_when_wait(context, time_description):
     time_description = time_description.strip()
@@ -149,3 +162,7 @@ def step_then_error(context, error_message):
 @then('debería haber comido {expected:d} pepinos')
 def step_then_pepinos_comidos(context, expected):
     assert context.belly.pepinos_comidos == expected
+
+@then('debería predecir que mi estómago gruñirá')
+def step_then_predict_gruñir(context):
+    assert context.belly.predecir_gruñido(context.predicted_cukes, context.predicted_time) is True

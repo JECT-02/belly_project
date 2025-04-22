@@ -80,3 +80,8 @@ def test_pepinos_comidos():
     belly = Belly()
     belly.comer(15)
     assert belly.pepinos_comidos == 15
+
+def test_predecir_gruñido():
+    belly = Belly()
+    assert belly.predecir_gruñido(12, 1.5) is True
+    assert belly.predecir_gruñido(5, 1.0) is False
