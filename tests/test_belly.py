@@ -69,3 +69,9 @@ def test_no_gruñir_con_tiempo_insuficiente():
     assert belly.pepinos_comidos == 30
     assert belly.tiempo_esperado == pytest.approx(1.341667, 0.001)
     assert belly.esta_gruñendo() is False
+
+def test_stomach_growls_after_many_cucumbers_and_two_hours():
+    belly = Belly()
+    belly.comer(11)
+    belly.esperar(2)
+    assert belly.esta_gruñendo() is True, "Stomach should growl after eating 11 cucumbers and waiting 2 hours"

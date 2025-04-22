@@ -95,3 +95,9 @@ Escenario: esperar con descripción compleja con comas y espacios
   Dado que he comido 30 pepinos
   Cuando espero "1 hora, 20 minutos, 30 segundos"
   Entonces mi estómago no debería gruñir
+
+@spanish
+Escenario: comer más de diez pepinos y esperar dos horas hace que el estómago gruñir
+  Dado que he comido 11 pepinos
+  Cuando espero 2 horas
+  Entonces mi estómago debería gruñir
