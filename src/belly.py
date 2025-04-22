@@ -1,6 +1,10 @@
 from features.steps.belly_steps import parse_time_description
 
 class Belly:
+    # Umbrales para gruñido
+    MIN_CUCUMBERS = 10
+    MIN_WAIT_HOURS = 1.5
+
     def __init__(self):
         self.pepinos_comidos = 0
         self.tiempo_esperado = 0
@@ -30,7 +34,7 @@ class Belly:
         self.tiempo_esperado += tiempo_en_horas
 
     def esta_gruñendo(self):
-        return self.tiempo_esperado >= 1.5 and self.pepinos_comidos > 10
+        return self.pepinos_comidos > self.MIN_CUCUMBERS and self.tiempo_esperado >= self.MIN_WAIT_HOURS
 
     def pepinos_comidos(self):
         return self.pepinos_comidos
