@@ -151,3 +151,24 @@ Escenario: Saber cuántos pepinos he comido
 Escenario: Predecir si mi estómago gruñirá tras comer y esperar
   Dado que planeo comer 12 pepinos y esperar 1.5 horas
   Entonces debería predecir que mi estómago gruñirá
+
+@criterio_nuevo @spanish
+Escenario: Calcular pepinos faltantes con tiempo suficiente
+  Dado que he comido 8 pepinos
+  Cuando espero 2 horas
+  Y pregunto cuántos pepinos más necesito para gruñir
+  Entonces debería decirme que necesito 3 pepinos más
+
+@criterio_nuevo @spanish
+Escenario: Calcular pepinos faltantes con tiempo insuficiente
+  Dado que he comido 15 pepinos
+  Cuando espero 1 hora
+  Y pregunto cuántos pepinos más necesito para gruñir
+  Entonces debería decirme que necesito 0 pepinos más
+
+@criterio_nuevo @spanish
+Escenario: Calcular pepinos faltantes cuando ya gruñe
+  Dado que he comido 20 pepinos
+  Cuando espero 2 horas
+  Y pregunto cuántos pepinos más necesito para gruñir
+  Entonces debería decirme que necesito 0 pepinos más

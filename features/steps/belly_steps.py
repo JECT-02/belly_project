@@ -142,6 +142,10 @@ def step_when_wait(context, time_description):
     except ValueError as e:
         context.error = str(e)
 
+@when('pregunto cuántos pepinos más necesito para gruñir')
+def step_ask_pepinos_faltantes(context):
+    context.faltantes = context.belly.pepinos_faltantes()
+
 @then('mi estómago podría gruñir')
 def step_then_podria_gruñir(context):
     assert isinstance(context.belly.esta_gruñendo(), bool)
@@ -166,3 +170,7 @@ def step_then_pepinos_comidos(context, expected):
 @then('debería predecir que mi estómago gruñirá')
 def step_then_predict_gruñir(context):
     assert context.belly.predecir_gruñido(context.predicted_cukes, context.predicted_time) is True
+
+@then('debería decirme que necesito {expected:d} pepinos más')
+def step_then_pepinos_faltantes(context, expected):
+    assert context.faltantes == expected

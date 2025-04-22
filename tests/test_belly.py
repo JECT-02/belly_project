@@ -85,3 +85,15 @@ def test_predecir_gruñido():
     belly = Belly()
     assert belly.predecir_gruñido(12, 1.5) is True
     assert belly.predecir_gruñido(5, 1.0) is False
+
+def test_pepinos_faltantes():
+    belly = Belly()
+    belly.comer(8)
+    belly.esperar(2)
+    assert belly.pepinos_faltantes() == 3  # 11 - 8
+    belly.comer(3)
+    assert belly.pepinos_faltantes() == 0  # Ya gruñe
+    belly.reset()
+    belly.comer(15)
+    belly.esperar(1)
+    assert belly.pepinos_faltantes() == 0  # Tiempo insuficiente

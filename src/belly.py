@@ -50,3 +50,8 @@ class Belly:
         if tiempo > 100000:
             raise ValueError("El tiempo de espera no puede exceder 100000 horas.")
         return cant_pepinos > self.MIN_CUCUMBERS and tiempo >= self.MIN_WAIT_HOURS
+
+    def pepinos_faltantes(self):
+        if self.tiempo_esperado < self.MIN_WAIT_HOURS or self.esta_gruñendo():
+            return 0
+        return max(0, self.MIN_CUCUMBERS + 1 - self.pepinos_comidos)
